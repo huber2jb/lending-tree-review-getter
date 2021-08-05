@@ -6,6 +6,14 @@ from werkzeug.exceptions import BadRequest, NotFound
 # Intialize Flask application
 app = Flask(__name__)
 
+# I have this only getting the reviews for the URL that was given. If it needs to return all reviews for the entity
+# it will have to call each page that is the entity has to get all the reviews. That can be very time consuming but
+# it would just be a for loop doing a GET request on each page and storing it the same way.
+
+# The for loop would just go around the try/except block and loop through the total amount of reviews the entity has
+# divided by 10 rounded up because lending tree has 10 reviews on each page.
+
+
 # Putting anything other than a secured lending tree url will send a BadRequest.
 @app.route('/')
 def default():
