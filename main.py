@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from flask import Flask, request, jsonify
+from werkzeug.exceptions import BadRequest, HTTPException, NotFound
 
 app = Flask(__name__)
 
@@ -13,10 +14,16 @@ app = Flask(__name__)
 
 @app.route('/<path:url>')
 def review_get(url):
+    if (url.find('lendingtree.com/reviews') == -1):
+        raise BadRequest
+
     reviewText, reviewAuthor, reviewTitle, reviewRating, reviewDate, reviewLoanType = [],[],[],[],[],[]
     try:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, features='lxml')
+        urlNotFound = soup.select_one(".error404")
+        if urlNotFound != None: raise NotFound
+        
         for review in soup.findAll('div', attrs={'class':'mainReviews'}):
             reviewTitle.append(review.find('p', attrs={'class':'reviewTitle'}).text.strip())
             reviewText.append(review.find('p', attrs={'class':'reviewText'}).text.strip())
@@ -25,7 +32,7 @@ def review_get(url):
             reviewDate.append(review.find('p', attrs={'class':'consumerReviewDate'}).text.strip()[12:])
             reviewLoanType.append(review.find('div', attrs={'class':'loanType'}).text.strip())
     except Exception as e:
-        print(e)
+        raise e
 
     dataJson = {'Reviews': [{'reviewNumber':number+1,
                             'reviewTitle':title, 
@@ -35,4 +42,8 @@ def review_get(url):
                             'reviewDate':date,
                             'reviewLoanType':loanType} for number, (title, text, author, rating, date, loanType) in enumerate(zip(reviewTitle, reviewText, reviewAuthor, reviewRating, reviewDate, reviewLoanType))]}
 
-    return json.dumps(dataJson, indent=4)
+    return jsonify(dataJson)
+
+@app.errorhandler(Exception)
+def handle_http_exception(e):
+    return e
