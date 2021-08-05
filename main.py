@@ -23,6 +23,10 @@ def review_get(url):
         soup = BeautifulSoup(response.text, features='lxml')
         urlNotFound = soup.select_one(".error404")
         if urlNotFound != None: raise NotFound
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 0537d9dfc4d3a85634dae1e65639cc0f9d434621
         for review in soup.findAll('div', attrs={'class':'mainReviews'}):
             reviewTitle.append(review.find('p', attrs={'class':'reviewTitle'}).text.strip())
             reviewText.append(review.find('p', attrs={'class':'reviewText'}).text.strip())
