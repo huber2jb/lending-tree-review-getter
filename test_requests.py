@@ -8,7 +8,6 @@ def review_get(url):
     if (url.find('lendingtree.com/reviews') == -1):
         return BadRequest
 
-
     reviewText, reviewAuthor, reviewTitle, reviewRating, reviewDate, reviewLoanType = [],[],[],[],[],[]
     try:
         response = requests.get(url)

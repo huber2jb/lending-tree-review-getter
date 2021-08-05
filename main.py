@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
-from werkzeug.exceptions import BadRequest, HTTPException, NotFound
+from werkzeug.exceptions import BadRequest, NotFound
 
 # Intialize Flask application
 app = Flask(__name__)
